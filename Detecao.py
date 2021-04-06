@@ -11,7 +11,7 @@ from lobe import ImageModel
 import pandas as pd
 import numpy as np
 
-model = ImageModel.load("20_objetos")
+
 ex = pd.read_excel(
     "Inventario_2021.xlsx", sheet_name="Geral", header=0, na_filter=False
 )
@@ -44,7 +44,7 @@ class App:
         )
         self.btn_snapshot.pack(anchor=tkinter.CENTER, expand=True, side="left")
 
-        # Button that lets the user take a snapshot
+        # Button that lets the user do a search text
         self.btn_search = tkinter.Button(
             window,
             text="Procura por Texto",
@@ -64,6 +64,17 @@ class App:
         )
         # self.btn_close.place(relx=0.8,rely=0.8, anchor='sw')
         self.btn_close.pack(anchor=tkinter.CENTER, expand=True, side="right")
+
+        # Button to load the tensorflow model
+        self.btn_load_model = tkinter.Button(
+            window,
+            text="Carregar Modelo",
+            width=15,
+            height=2,
+            command=self.load_model,
+        )
+        self.btn_load_model.place(relx=0.9, rely=0.52, anchor="sw")
+        # self.btn_load_model.pack(anchor=tkinter.CENTER, expand=True, side="right")
 
         # cria as labels iniciais
         self.Lbl_inicial()
@@ -108,19 +119,52 @@ class App:
             # cv2.imwrite("Imagem-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
             cv2.imwrite("Imagem.png", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
             # Previsão a partir da captura realizada
-            self.result = model.predict_from_file("Imagem.png")
-            # Print top prediction
-            # print(result.prediction)
-            # print(result.labels[0][1]) # percentagem de certeza maior, ou seja, do result prediction
+            try:
+                self.result = self.model.predict_from_file("Imagem.png")
+                # Print top prediction
+                # print(result.prediction)
+                # print(result.labels[0][1]) # percentagem de certeza maior, ou seja, do result prediction
 
-            # Print all classes
-            # for label, confidence in result.labels:
-            #    print(f"{label}: {confidence*100}%")
-            self.obj_name = self.result.prediction
-            self.Lbl()
+                # Print all classes
+                # for label, confidence in result.labels:
+                #    print(f"{label}: {confidence*100}%")
+                self.obj_name = self.result.prediction
+                self.Lbl()
+            except:
+                # caso em que não carregou o modelo
+                messagebox.showinfo(
+                    "Informação", "O Modelo de TensorFlow não foi carregado"
+                )
+
+    # Função para carregar o modelo de tensorflow
+    def load_model(self):
+        if self.dir_modelo.get() != "":
+            self.model = ImageModel.load(self.dir_modelo.get())
+            messagebox.showinfo(
+                "Informação", "O Modelo de TensorFlow foi carregado com sucesso"
+            )
+        else:
+            messagebox.showinfo(
+                "Informação", "Insira o diretório do Modelo de TensorFlow"
+            )
 
     # Labels iniciais
     def Lbl_inicial(self):
+
+        """Diretorio do Modelo TensorFlow"""
+        self.dir_modelo_text = tkinter.Label(
+            self.window,
+            text="Diretório" + "\n" + "Modelo TensorFlow",
+            fg="black",
+            font=("Arial", 10),
+            bg="white",
+            width=15,
+            borderwidth=2,
+            relief="groove",
+        )
+        self.dir_modelo_text.place(relx=0.8975, rely=0.405, anchor="sw")
+        self.dir_modelo = tkinter.Entry(self.window)
+        self.dir_modelo.place(relx=0.8975, rely=0.44, anchor="sw")
 
         # Criar as labels com os nomes do que aparece
         self.lbl_Nome_text = tkinter.Label(
