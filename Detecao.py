@@ -73,8 +73,18 @@ class App:
             height=2,
             command=self.load_model,
         )
-        self.btn_load_model.place(relx=0.9, rely=0.52, anchor="sw")
+        self.btn_load_model.place(relx=0.9025, rely=0.52, anchor="sw")
         # self.btn_load_model.pack(anchor=tkinter.CENTER, expand=True, side="right")
+
+        # Button to load the camera
+        self.btn_load_camera = tkinter.Button(
+            window,
+            text="Carregar Câmera",
+            width=15,
+            height=2,
+            command=self.load_camera,
+        )
+        self.btn_load_camera.place(relx=0.9, rely=0.2, anchor="sw")
 
         # cria as labels iniciais
         self.Lbl_inicial()
@@ -136,6 +146,19 @@ class App:
                     "Informação", "O Modelo de TensorFlow não foi carregado"
                 )
 
+    # Função para carregar uma nova camera
+    def load_camera(self):
+        if self.camera.get() != "":
+            # self.vid.__del__()  # libertar a camera atual
+            self.vid.__del__()
+            # open video source (by default this will try to open the computer webcam)
+            self.vid = MyVideoCapture(
+                int(self.camera.get())
+            )  # a funcao da captura de video fica alocada à variável vid
+            messagebox.showinfo("Informação", "A câmera foi carregada com sucesso")
+        else:
+            messagebox.showinfo("Informação", "Insira o número da sua nova câmera")
+
     # Função para carregar o modelo de tensorflow
     def load_model(self):
         if self.dir_modelo.get() != "":
@@ -150,6 +173,20 @@ class App:
 
     # Labels iniciais
     def Lbl_inicial(self):
+        """Selecionar a câmera"""
+        self.camera_text = tkinter.Label(
+            self.window,
+            text="Número" + "\n" + "Câmera",
+            fg="black",
+            font=("Arial", 10),
+            bg="white",
+            width=10,
+            borderwidth=2,
+            relief="groove",
+        )
+        self.camera_text.place(relx=0.9125, rely=0.095, anchor="sw")
+        self.camera = tkinter.Entry(self.window)
+        self.camera.place(relx=0.8975, rely=0.13, anchor="sw")
 
         """Diretorio do Modelo TensorFlow"""
         self.dir_modelo_text = tkinter.Label(
@@ -643,10 +680,11 @@ class App:
 
 
 class MyVideoCapture:
-    def __init__(self, video_source=0):
+    def __init__(self, video_source):
         # Open the video source
         self.vid = cv2.VideoCapture(video_source)
         if not self.vid.isOpened():
+            messagebox.showinfo("Informação", "Insira um número válido de câmera")
             raise ValueError("Unable to open video source", video_source)
 
         # Get video source width and height
@@ -674,7 +712,7 @@ class MyVideoCapture:
     def __del__(self):
         if self.vid.isOpened():
             self.vid.release()
-            cv2.destroyAllWindows()
+            # cv2.destroyAllWindows()
 
 
 # Create a window and pass it to the Application object
