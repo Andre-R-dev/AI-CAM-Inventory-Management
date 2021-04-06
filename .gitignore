@@ -127,4 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-.Demonstracao_10obj2
+Demonstracao_10obj2
+d_venv
+20_objetos

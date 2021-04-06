@@ -11,7 +11,7 @@ from lobe import ImageModel
 import pandas as pd
 import numpy as np
 
-model = ImageModel.load("Demonstracao_10obj2")
+model = ImageModel.load("20_objetos")
 ex = pd.read_excel(
     "Inventario_2021.xlsx", sheet_name="Geral", header=0, na_filter=False
 )
