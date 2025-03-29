@@ -1,4 +1,4 @@
-# Detecao_Invetario
+# AI-CAM-Inventory-Management
 
 Programas necessários para a utilização do Kinect V2:\
 Instalar Kinect SDK 2.0, Kinect Runtime 2.2 e Kinect ToolKit 1.8.\
